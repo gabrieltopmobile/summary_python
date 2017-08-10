@@ -54,6 +54,7 @@ def api():
     # print(text)
 
     urls = find_url(text)
+    print (urls)
     privacy_url = get_privacy_url(urls)
     terms_url = get_terms_url(urls)
     try:
@@ -90,7 +91,7 @@ def error405(error):
 def get_terms_url(urls):
     terms_urls = []
     for i in urls:
-        if "terms" in i:
+        if "terms" in i.lower():
             terms_urls.append(i)
     return terms_urls
 
@@ -98,7 +99,7 @@ def get_terms_url(urls):
 def get_privacy_url(urls):
     privacy_urls = []
     for i in urls:
-        if "privacy" in i:
+        if "privacy" in i.lower():
             privacy_urls.append(i)
     return privacy_urls
 
