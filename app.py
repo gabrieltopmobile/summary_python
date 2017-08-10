@@ -24,7 +24,6 @@ def error404(error):
 @app.route('/')
 def index():
     response.content_type = 'application/json'
-
     return "test"
 
 
@@ -45,11 +44,11 @@ def api():
 
     """check text field"""
     try:
-        text = jsontext['text']
+        text = jsontext['description']
     except:
         status = "false"
         response.content_type = 'application/json'
-        message = "have not text field"
+        message = "have not description field"
         return json.dumps(OrderedDict(status=status, message=message))
 
     """remove service symbol for summarize"""
