@@ -11,6 +11,7 @@ import time
 
 app = application = Bottle()
 
+#
 @app.error(404)
 def error404(error):
     """error 404"""

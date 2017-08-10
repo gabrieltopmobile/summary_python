@@ -5,6 +5,7 @@ MAINTAINER Andrey Zaycev <andrezaycev@gmail.com>
 RUN pip install uwsgi
 RUN pip install gensim bottle html2text selenium
 COPY bin/phantomjs /usr/local/bin
+RUN chmod +x /usr/local/bin/phantomjs
 
 ENV NGINX_VERSION 1.9.11-1~jessie
 
