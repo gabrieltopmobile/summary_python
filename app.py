@@ -14,6 +14,7 @@ app = application = Bottle()
 
 @app.error(404)
 def error404(error):
+    """error 404"""
     response.content_type = 'application/json'
     status = "false"
     message = "404 page not found, check api documentation"
@@ -23,7 +24,7 @@ def error404(error):
 @app.route('/')
 def index():
     response.content_type = 'application/json'
-    data = []
+
     return "test"
 
 
@@ -31,7 +32,9 @@ def index():
 def api():
     status = "true"
     message = "None"
+    response.content_type = 'application/json'
 
+    """get json from post. validate"""
     try:
         jsontext = request.json
     except:
@@ -40,6 +43,7 @@ def api():
         message = "wrong json format"
         return json.dumps(OrderedDict(status=status, message=message))
 
+    """check text field"""
     try:
         text = jsontext['text']
     except:
@@ -48,22 +52,27 @@ def api():
         message = "have not text field"
         return json.dumps(OrderedDict(status=status, message=message))
 
+    """remove service symbol for summarize"""
     for i in [r'\\n', r'\\t', r'•']:
         text = re.sub(i, " ", text)
     text = re.sub(r'\s+', ' ', text)
     # print(text)
 
+    """find urls"""
     urls = find_url(text)
-    print (urls)
+    # print (urls)
     privacy_url = get_privacy_url(urls)
     terms_url = get_terms_url(urls)
+
+    """summarize description"""
     try:
         description = summarize(text)
     except Exception as e:
         status = "false"
         message = str(e)
         return json.dumps(OrderedDict(status=status, message=message))
-    response.content_type = 'application/json'
+
+    """get and summarize privacy"""
     privacy = ""
     if len(privacy_url) > 0:
         description = description + "\nPrivacy Policy: " + ", ".join(s for s in privacy_url)
@@ -71,6 +80,7 @@ def api():
         for i in privacy_url:
             privacy += summarize_from_link(i)
 
+    """get and summarize terms"""
     terms = ""
     if len(terms_url) > 0:
         description = description + "\nTerms of Service: " + ", ".join(s for s in terms_url)
@@ -89,6 +99,7 @@ def error405(error):
 
 
 def get_terms_url(urls):
+    """search terms url"""
     terms_urls = []
     for i in urls:
         if "terms" in i.lower():
@@ -97,6 +108,7 @@ def get_terms_url(urls):
 
 
 def get_privacy_url(urls):
+    """search privacy url"""
     privacy_urls = []
     for i in urls:
         if "privacy" in i.lower():
@@ -105,10 +117,12 @@ def get_privacy_url(urls):
 
 
 def find_url(text):
+    """find http url"""
     return re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
 
 
 def summarize_from_link(link):
+    """phantomjs browser for content"""
     browser = webdriver.PhantomJS()
     browser.get(link)
     time.sleep(2)
@@ -117,7 +131,7 @@ def summarize_from_link(link):
     text = summarize(text)
     del browser
     if text is None:
-        text=""
+        text = ""
     return text
 
 
