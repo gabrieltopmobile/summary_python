@@ -131,9 +131,11 @@ def summarize_from_link(link):
     soup = BeautifulSoup(html, 'html.parser')
     text_list = [string.text for string in soup.find_all('p')]
     text = ' '.join(text_list)
+    #print (text)
     try:
-        text = summarize(text, ratio=0.02)
-    except:
+        text = summarize(text, ratio=0.15)
+    except Exception as e:
+        print ("exception: " + str(e))
         text = ""
     del browser
 
