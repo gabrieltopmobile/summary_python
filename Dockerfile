@@ -3,7 +3,8 @@ FROM python:3.5
 MAINTAINER Andrey Zaycev <andrezaycev@gmail.com>
 
 RUN pip install uwsgi
-RUN pip install gensim bottle html2text selenium
+RUN pip install gensim bottle selenium
+RUN pip install beautifulsoup4
 COPY bin/phantomjs /usr/local/bin
 RUN chmod +x /usr/local/bin/phantomjs
 

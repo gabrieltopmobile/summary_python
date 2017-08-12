@@ -1,13 +1,15 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-from gensim.summarization import summarize
-from bottle import route, run, response, Bottle, request
 import json
-from collections import OrderedDict
 import re
-import html2text
-from selenium import webdriver
 import time
+from bottle import route, run, response, Bottle, request
+from bs4 import BeautifulSoup
+from collections import OrderedDict
+from gensim.summarization import summarize
+from selenium import webdriver
+
+
 
 app = application = Bottle()
 
@@ -65,7 +67,7 @@ def api():
 
     """summarize description"""
     try:
-        description = summarize(text)
+        description = summarize(text, ratio=0.1)
     except Exception as e:
         status = "false"
         message = str(e)
@@ -74,7 +76,6 @@ def api():
     """get and summarize privacy"""
     privacy = ""
     if len(privacy_url) > 0:
-        description = description + "\nPrivacy Policy: " + ", ".join(s for s in privacy_url)
 
         for i in privacy_url:
             privacy += summarize_from_link(i)
@@ -82,7 +83,7 @@ def api():
     """get and summarize terms"""
     terms = ""
     if len(terms_url) > 0:
-        description = description + "\nTerms of Service: " + ", ".join(s for s in terms_url)
+
         for i in terms_url:
             terms += summarize_from_link(i)
 
@@ -126,9 +127,12 @@ def summarize_from_link(link):
     browser.get(link)
     time.sleep(2)
     html = browser.page_source
-    text = html2text.html2text(html)
-    text = summarize(text)
+    soup = BeautifulSoup(html, 'html.parser')
+    text_list = [string.text for string in soup.find_all('p')]
+    text = ' '.join(text_list)
+    text = summarize(text, ratio=0.02)
     del browser
+
     if text is None:
         text = ""
     return text
