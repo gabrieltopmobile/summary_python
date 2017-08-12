@@ -82,6 +82,7 @@ def api():
 
     """get and summarize terms"""
     terms = ""
+
     if len(terms_url) > 0:
 
         for i in terms_url:
@@ -130,7 +131,10 @@ def summarize_from_link(link):
     soup = BeautifulSoup(html, 'html.parser')
     text_list = [string.text for string in soup.find_all('p')]
     text = ' '.join(text_list)
-    text = summarize(text, ratio=0.02)
+    try:
+        text = summarize(text, ratio=0.02)
+    except:
+        text = ""
     del browser
 
     if text is None:
